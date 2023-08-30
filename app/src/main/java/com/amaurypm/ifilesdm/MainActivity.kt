@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.amaurypm.ifilesdm.databinding.ActivityMainBinding
+import com.amaurypm.ifilesdm.model.Student
+import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -28,7 +30,11 @@ class MainActivity : AppCompatActivity() {
             if(!binding.tietText.text.toString().isEmpty()){
                 //El usuario escribió algo
 
-                val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
+                //val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
+
+                val student = Student(name = binding.tietText.text.toString())
+                val bytesToSave = Gson().toJson(student).encodeToByteArray()
+
 
                 try{
 
@@ -84,7 +90,12 @@ class MainActivity : AppCompatActivity() {
                 fis.close()*/
 
                 //En Kotlin
-                binding.tvContent.text = file.readBytes().decodeToString()
+                //binding.tvContent.text = file.readBytes().decodeToString()
+
+                val jsonString = file.readBytes().decodeToString()
+                val student = Gson().fromJson(jsonString, Student::class.java)
+                binding.tvContent.text = "Id: ${student.id} Nombre: ${student.name}"
+
 
             } else {
                 sbMessage(
