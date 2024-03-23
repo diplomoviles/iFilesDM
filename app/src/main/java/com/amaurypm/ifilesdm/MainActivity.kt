@@ -10,9 +10,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.amaurypm.ifilesdm.databinding.ActivityMainBinding
 import com.amaurypm.ifilesdm.model.Student
 import com.google.gson.Gson
+import org.simpleframework.xml.core.Persister
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.StringWriter
 import java.lang.Exception
 
 
@@ -20,16 +22,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    //Para poder serializar el xml
+    private lateinit var serializer: Persister
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
-
-        //miToast("Hola!")
-
-        //miToast("Hola 2", Toast.LENGTH_LONG)
+        //Instanciando el serializer
+        serializer = Persister()
 
 
     }
@@ -43,9 +46,16 @@ class MainActivity : AppCompatActivity() {
 
             val student = Student(name = binding.tietText.text.toString())
 
-            //Pasando el objeto student a un json
-            val bytesToSave = Gson().toJson(student).encodeToByteArray()
+            //Creamos un escritor para el xml
+            val writer = StringWriter()
 
+            //Serializamos el objeto en XML
+            serializer.write(student, writer)
+
+            //Obtenemos el xml como cadena
+            val xmlString = writer.toString()
+
+            val bytesToSave = xmlString.encodeToByteArray()
 
             try {
                 val file = File(filesDir, "mi_archivo.txt")
@@ -88,10 +98,9 @@ class MainActivity : AppCompatActivity() {
 
             if (file.exists()) {
 
-                //binding.tvContent.text = file.readBytes().decodeToString()
 
-                val jsonString = file.readBytes().decodeToString()
-                val student = Gson().fromJson(jsonString, Student::class.java)
+                val xmlString = file.readBytes().decodeToString()
+                val student = serializer.read(Student::class.java, xmlString)
 
                 binding.tvContent.text = getString(R.string.student, student.id, student.name)
 
