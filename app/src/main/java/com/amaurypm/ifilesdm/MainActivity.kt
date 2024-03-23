@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.amaurypm.ifilesdm.databinding.ActivityMainBinding
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.Exception
 
@@ -29,8 +30,6 @@ class MainActivity : AppCompatActivity() {
         //miToast("Hola 2", Toast.LENGTH_LONG)
 
 
-
-
     }
 
     fun clickSave(view: View) {
@@ -38,28 +37,37 @@ class MainActivity : AppCompatActivity() {
 
         view.hideKeyboard()
 
-        if(binding.tietText.text.toString().isNotEmpty()){
+        if (binding.tietText.text.toString().isNotEmpty()) {
 
             //Codificando a bytes la cadena de texto a almacenar
             val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
 
-            try{
-                val file = File(filesDir,"mi_archivo.txt")
+            try {
+                val file = File(filesDir, "mi_archivo.txt")
 
-                if(!file.exists()){
+                if (!file.exists()) {
                     file.createNewFile()
                 }
 
-                val fos = FileOutputStream(file)
+                /*val fos = FileOutputStream(file, true)
                 fos.write(bytesToSave)
-                fos.close()
+                fos.close()*/
 
-            }catch(e: Exception){
+                //file.appendBytes(bytesToSave)
+                file.writeBytes(bytesToSave)
+
+                sbMessage(
+                    binding.clRoot,
+                    getString(R.string.guardado_exitoso),
+                    bgColor = "#50C228"
+                )
+
+            } catch (e: Exception) {
                 //Manejar la excepción
             }
 
 
-        }else{
+        } else {
             sbMessage(
                 binding.clRoot,
                 "Ingrese la información a almacenar"
@@ -74,6 +82,29 @@ class MainActivity : AppCompatActivity() {
     fun clickRead(view: View) {
         //Clic del botón read
 
-        view.hideKeyboard()
+        try {
+
+            val file = File(filesDir, "mi_archivo.txt")
+
+            if (file.exists()) {
+
+                /*
+                val fis = FileInputStream(file)
+                val content = fis.readBytes()
+                binding.tvContent.text = content.decodeToString()
+                fis.close()*/
+
+                binding.tvContent.text = file.readBytes().decodeToString()
+
+            } else {
+                sbMessage(
+                    binding.clRoot,
+                    "No existe información o archivo almacenado en el dispositivo"
+                )
+            }
+
+        } catch (e: Exception) {
+            //Manejo de la excepción
+        }
     }
 }
