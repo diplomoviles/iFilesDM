@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">iFiles DM</string>
-    <string name="guardado_exitoso">Data succesfully saved</string>
+    <string name="guardado_exitoso">Data successfully saved</string>
+    <string name="student">Id: %d, Name: %s</string>
 </resources>

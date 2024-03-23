@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">iFiles DM</string>
     <string name="guardado_exitoso">La información fue almacenada correctamente</string>
+    <string name="student">Id: %d, Nombre: %s</string>
 </resources>

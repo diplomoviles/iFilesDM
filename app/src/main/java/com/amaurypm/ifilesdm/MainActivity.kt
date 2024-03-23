@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.amaurypm.ifilesdm.databinding.ActivityMainBinding
+import com.amaurypm.ifilesdm.model.Student
+import com.google.gson.Gson
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -39,8 +41,11 @@ class MainActivity : AppCompatActivity() {
 
         if (binding.tietText.text.toString().isNotEmpty()) {
 
-            //Codificando a bytes la cadena de texto a almacenar
-            val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
+            val student = Student(name = binding.tietText.text.toString())
+
+            //Pasando el objeto student a un json
+            val bytesToSave = Gson().toJson(student).encodeToByteArray()
+
 
             try {
                 val file = File(filesDir, "mi_archivo.txt")
@@ -49,11 +54,6 @@ class MainActivity : AppCompatActivity() {
                     file.createNewFile()
                 }
 
-                /*val fos = FileOutputStream(file, true)
-                fos.write(bytesToSave)
-                fos.close()*/
-
-                //file.appendBytes(bytesToSave)
                 file.writeBytes(bytesToSave)
 
                 sbMessage(
@@ -88,13 +88,12 @@ class MainActivity : AppCompatActivity() {
 
             if (file.exists()) {
 
-                /*
-                val fis = FileInputStream(file)
-                val content = fis.readBytes()
-                binding.tvContent.text = content.decodeToString()
-                fis.close()*/
+                //binding.tvContent.text = file.readBytes().decodeToString()
 
-                binding.tvContent.text = file.readBytes().decodeToString()
+                val jsonString = file.readBytes().decodeToString()
+                val student = Gson().fromJson(jsonString, Student::class.java)
+
+                binding.tvContent.text = getString(R.string.student, student.id, student.name)
 
             } else {
                 sbMessage(
