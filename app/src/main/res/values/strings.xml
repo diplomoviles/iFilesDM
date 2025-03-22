@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">iFiles DM</string>
+    <string name="empty_tiet">Por favor ingresa la información a almacenar</string>
+    <string name="error_message">Error al guardar</string>
 </resources>
