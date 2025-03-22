@@ -8,6 +8,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.amaurypm.ifilesdm.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -49,7 +52,16 @@ class MainActivity : AppCompatActivity() {
             if(binding.tietText.text.toString().isNotEmpty()){
 
                 //Pasamos la cadena a un arreglo de bytes
-                val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
+                //val bytesToSave = binding.tietText.text.toString().encodeToByteArray()
+
+                //Con Gson
+                /*val student = Student(name = binding.tietText.text.toString())
+                val bytesToSave = Gson().toJson(student).encodeToByteArray()*/
+
+                //Con Moshi
+                val student = Student(name = binding.tietText.text.toString(), lastname = "Rodríguez")
+                val jsonAdapter = Moshi.Builder().build().adapter(Student::class.java)
+                val bytesToSave = jsonAdapter.toJson(student).encodeToByteArray()
 
                 try{
 
@@ -114,7 +126,19 @@ class MainActivity : AppCompatActivity() {
                     binding.tvContent.text = content.decodeToString()
                     fis.close()*/
 
-                    binding.tvContent.text = file.readText()
+                    //binding.tvContent.text = file.readText()
+
+                    //Lectura con Gson
+                    /*val jsonString = file.readText()
+                    val student = Gson().fromJson(jsonString, Student::class.java)
+                    //binding.tvContent.text = "Nombre del usuario: ${student.name}\n Id: ${student.id}"
+                    binding.tvContent.text = getString(R.string.student_info, student.name, student.id)*/
+
+                    //Lectura con Moshi
+                    val jsonString = file.readText()
+                    val student = Moshi.Builder().build().adapter(Student::class.java).fromJson(jsonString)
+                    binding.tvContent.text = getString(R.string.student_info, student?.name, student?.id)
+
 
                 }else{
                     sbMessage(
